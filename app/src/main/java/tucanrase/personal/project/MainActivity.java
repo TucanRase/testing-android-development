@@ -2,6 +2,7 @@ package tucanrase.personal.project;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.TextView;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -11,11 +12,15 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import tucanrase.personal.project.models.WeatherData;
 
 public class MainActivity extends AppCompatActivity {
+    TextView tvLocation,tvLastUpdate,tvTemp,tvMinMax;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        initializer();
+
         fetchWeather();
     }
 
@@ -28,7 +33,9 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<WeatherData> call, Response<WeatherData> response) {
                 if(response.isSuccessful()){
                     WeatherData weatherData= response.body();
-                    System.out.println(weatherData.getCountry());
+                    tvLocation.setText(weatherData.getLocation().getName());
+                    tvLastUpdate.setText(weatherData.getCurrent().getLastUpdate());
+                    tvTemp.setText(String.valueOf(weatherData.getCurrent().getTempC())+"ºC");
 
                 }
             }
@@ -38,5 +45,12 @@ public class MainActivity extends AppCompatActivity {
                 System.out.println("Error: "+ t.getMessage());
             }
         });
+    }
+
+    public void initializer(){
+        tvLocation=findViewById(R.id.tvLocation);
+        tvLastUpdate=findViewById(R.id.tvLastUpdate);
+        tvTemp=findViewById(R.id.tvTemp);
+        tvMinMax=findViewById(R.id.tvMinMax);
     }
 }
