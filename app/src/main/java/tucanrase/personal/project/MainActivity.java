@@ -1,18 +1,26 @@
 package tucanrase.personal.project;
 
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.os.Bundle;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import tucanrase.personal.project.models.ForecastDay;
 import tucanrase.personal.project.models.WeatherData;
 
 public class MainActivity extends AppCompatActivity {
-    TextView tvLocation,tvLastUpdate,tvTemp,tvMinMax;
+    TextView tvLocation, tvLastUpdate, tvTemp, tvMinMax,dateTomorrow,dateAfterT,date2Days,minMax1,minMax2,minMax3;
+    ImageView weatherIconNow,weatherIcon1,weatherIcon2,weatherIcon3;
+    List<ForecastDay> forecastDays=new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,33 +32,47 @@ public class MainActivity extends AppCompatActivity {
         fetchWeather();
     }
 
-    void fetchWeather(){
-        Retrofit retrofit=new Retrofit.Builder().baseUrl("https://api.weatherapi.com/").addConverterFactory(GsonConverterFactory.create()).build();
-        WeatherApi weatherApi=retrofit.create(WeatherApi.class);
-        Call<WeatherData> call=weatherApi.getWeather("13084a48383d4912bce114058220303","auto:ip");
+    void fetchWeather() {
+        // TODO: 07/03/2022 add loading bar
+        Retrofit retrofit = new Retrofit.Builder().baseUrl("https://api.weatherapi.com/").addConverterFactory(GsonConverterFactory.create()).build();
+        WeatherApi weatherApi = retrofit.create(WeatherApi.class);
+        Call<WeatherData> call = weatherApi.getWeather("13084a48383d4912bce114058220303", "galdar","5","15");
         call.enqueue(new Callback<WeatherData>() {
             @Override
             public void onResponse(Call<WeatherData> call, Response<WeatherData> response) {
-                if(response.isSuccessful()){
-                    WeatherData weatherData= response.body();
+                if (response.isSuccessful()) {
+                    WeatherData weatherData = response.body();
                     tvLocation.setText(weatherData.getLocation().getName());
                     tvLastUpdate.setText(weatherData.getCurrent().getLastUpdate());
-                    tvTemp.setText(String.valueOf(weatherData.getCurrent().getTempC())+"ºC");
-
+                    tvTemp.setText(weatherData.getCurrent().getTempC() + "ºC");
+                    forecastDays=weatherData.getForecast().getForecastDays();
+                    tvTemp.setText(forecastDays.get(0).getDay().getMaxtemp_c()+"");
+                    /*tvTemp.setText(weatherData.getCurrent().getTempC());
+                    tvTemp.setText(weatherData.getCurrent().getTempC());
+                    tvTemp.setText(weatherData.getCurrent().getTempC());
+                    tvTemp.setText(weatherData.getCurrent().getTempC());
+                    tvTemp.setText(weatherData.getCurrent().getTempC());*/
                 }
             }
 
             @Override
             public void onFailure(Call<WeatherData> call, Throwable t) {
-                System.out.println("Error: "+ t.getMessage());
+                System.out.println("Error: " + t.getMessage());
             }
         });
     }
 
-    public void initializer(){
-        tvLocation=findViewById(R.id.tvLocation);
-        tvLastUpdate=findViewById(R.id.tvLastUpdate);
-        tvTemp=findViewById(R.id.tvTemp);
-        tvMinMax=findViewById(R.id.tvMinMax);
+    public void initializer() {
+        tvLocation = findViewById(R.id.tvLocation);
+        tvLastUpdate = findViewById(R.id.tvLastUpdate);
+        tvTemp = findViewById(R.id.tvTemp);
+        tvMinMax = findViewById(R.id.tvMinMax);
+
+        dateTomorrow = findViewById(R.id.dateTomorrow);
+        dateAfterT = findViewById(R.id.dateAfterT);
+        date2Days = findViewById(R.id.date2Days);
+        minMax1 = findViewById(R.id.minMax1);
+        minMax2 = findViewById(R.id.minMax2);
+        minMax3 = findViewById(R.id.minMax3);
     }
 }
