@@ -3,13 +3,13 @@ package tucanrase.personal.project.models;
 import java.util.List;
 
 public class Forecast {
-    private List<ForecastDay> forecastDays;
+    private List<Forecastday> forecastday;
 
-    public Forecast(List<ForecastDay> forecastDays) {
-        this.forecastDays = forecastDays;
+    public Forecast(List<Forecastday> forecastday) {
+        this.forecastday = forecastday;
     }
 
-    public List<ForecastDay> getForecastDays() {
-        return forecastDays;
+    public List<Forecastday> getForecastDays() {
+        return forecastday;
     }
 }

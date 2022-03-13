@@ -1,12 +1,12 @@
 package tucanrase.personal.project.models;
 
-public class ForecastDay {
+public class Forecastday {
     private String date;
     private Day day;
 
 
 
-    public ForecastDay(String date, Day day) {
+    public Forecastday(String date, Day day) {
         this.date = date;
         this.day = day;
     }
