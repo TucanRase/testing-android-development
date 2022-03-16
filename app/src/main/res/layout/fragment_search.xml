@@ -24,7 +24,8 @@
             android:hint="@string/search"
             android:textColor="@color/black"
             android:textColorHint="@android:color/holo_red_dark"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:maxLines="1"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -32,7 +33,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/tilSearch"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="13dp"
         android:contentDescription="@string/search_results">
 
     </androidx.recyclerview.widget.RecyclerView>
@@ -41,21 +42,31 @@
         android:id="@+id/loadingSearch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true">
+        android:layout_centerInParent="true"
+        android:visibility="gone">
 
-        <ProgressBar
-            android:id="@+id/pbSearch"
-            style="@style/Widget.AppCompat.ProgressBar"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:padding="10dp">
 
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="50dp"
-            android:text="@string/loading" />
+            <ProgressBar
+                android:id="@+id/pbSearch"
+                style="@style/Widget.AppCompat.ProgressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true" />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/pbSearch"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:text="@string/loading" />
+        </RelativeLayout>
+
     </androidx.cardview.widget.CardView>
 
 </RelativeLayout>

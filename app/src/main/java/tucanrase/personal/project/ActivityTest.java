@@ -19,6 +19,8 @@ ActivityTestBinding binding;
         binding=ActivityTestBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        replaceFragment(new SearchFragment());
+
         binding.bottomNavBar.setOnItemSelectedListener(item -> {
             switch (item.getItemId()){
                 case R.id.searchNav:

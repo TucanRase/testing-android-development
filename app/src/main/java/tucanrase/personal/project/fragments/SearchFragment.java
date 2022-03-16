@@ -2,13 +2,19 @@ package tucanrase.personal.project.fragments;
 
 import android.os.Bundle;
 
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,8 +46,10 @@ public class SearchFragment extends Fragment {
     private String mParam2;
 
     RecyclerView searchRecycler;
-    List<Search> searches=new ArrayList<>();
+    List<Search> searches = new ArrayList<>();
     SearchAdapter adapter;
+    TextInputLayout tilSearch;
+    CardView pbSearch;
 
     public SearchFragment() {
         // Required empty public constructor
@@ -77,28 +85,50 @@ public class SearchFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view=inflater.inflate(R.layout.fragment_search, container, false);
+        View view = inflater.inflate(R.layout.fragment_search, container, false);
 
-        searchRecycler=view.findViewById(R.id.searchRecycler);
+        pbSearch = view.findViewById(R.id.loadingSearch);
+        searchRecycler = view.findViewById(R.id.searchRecycler);
         searchRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
+        adapter = new SearchAdapter(getContext(), searches);
+        searchRecycler.setAdapter(adapter);
 
-        searches=fetchSearch();
+        tilSearch = view.findViewById(R.id.tilSearch);
+        tilSearch.getEditText().addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start,
+                                          int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String location=tilSearch.getEditText().getText().toString().trim();
+                if (s.length() != 0)
+                    fetchSearch(location);
+            }
+        });
 
         return view;
     }
 
-    List<Search> fetchSearch() {
+    List<Search> fetchSearch(String location) {
+        pbSearch.setVisibility(View.VISIBLE);
         Retrofit retrofit = new Retrofit.Builder().baseUrl("https://api.weatherapi.com/").addConverterFactory(GsonConverterFactory.create()).build();
         WeatherApi weatherApi = retrofit.create(WeatherApi.class);
-        Call<List<Search>> call = weatherApi.getSearch("13084a48383d4912bce114058220303","telde");
+        Call<List<Search>> call = weatherApi.getSearch("13084a48383d4912bce114058220303", location);
         call.enqueue(new Callback<List<Search>>() {
             @Override
             public void onResponse(Call<List<Search>> call, Response<List<Search>> response) {
                 if (response.isSuccessful()) {
-                    searches=response.body();
-
-                    adapter=new SearchAdapter(getContext(),searches);
-                    searchRecycler.setAdapter(adapter);
+                    searches = response.body();
+                    adapter.notifyDataSetChanged();
+                    System.out.println(adapter.getItemCount());
+                    // TODO: 16/03/2022 Fix adapter refresh on call 
                 }
             }
 
@@ -107,6 +137,7 @@ public class SearchFragment extends Fragment {
                 System.out.println("Error: " + t.getMessage());
             }
         });
+        pbSearch.setVisibility(View.GONE);
         return searches;
     }
 }
