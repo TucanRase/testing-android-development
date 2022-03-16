@@ -3,12 +3,25 @@ package tucanrase.personal.project.fragments;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 import tucanrase.personal.project.R;
+import tucanrase.personal.project.SearchAdapter;
+import tucanrase.personal.project.WeatherApi;
+import tucanrase.personal.project.models.Search;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -25,6 +38,10 @@ public class SearchFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    RecyclerView searchRecycler;
+    List<Search> searches=new ArrayList<>();
+    SearchAdapter adapter;
 
     public SearchFragment() {
         // Required empty public constructor
@@ -60,7 +77,36 @@ public class SearchFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_search, container, false);
+        View view=inflater.inflate(R.layout.fragment_search, container, false);
+
+        searchRecycler=view.findViewById(R.id.searchRecycler);
+        searchRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        searches=fetchSearch();
+
+        return view;
+    }
+
+    List<Search> fetchSearch() {
+        Retrofit retrofit = new Retrofit.Builder().baseUrl("https://api.weatherapi.com/").addConverterFactory(GsonConverterFactory.create()).build();
+        WeatherApi weatherApi = retrofit.create(WeatherApi.class);
+        Call<List<Search>> call = weatherApi.getSearch("13084a48383d4912bce114058220303","telde");
+        call.enqueue(new Callback<List<Search>>() {
+            @Override
+            public void onResponse(Call<List<Search>> call, Response<List<Search>> response) {
+                if (response.isSuccessful()) {
+                    searches=response.body();
+
+                    adapter=new SearchAdapter(getContext(),searches);
+                    searchRecycler.setAdapter(adapter);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Search>> call, Throwable t) {
+                System.out.println("Error: " + t.getMessage());
+            }
+        });
+        return searches;
     }
 }

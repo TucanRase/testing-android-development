@@ -19,6 +19,7 @@ public interface WeatherApi {
 
     @GET("v1/search.json")
     Call<List<Search>> getSearch(
+            @Query("key") String key,
             @Query("q") String q
     );
 }

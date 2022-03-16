@@ -8,9 +8,9 @@
 
 
     <FrameLayout
+        android:id="@+id/frame_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/frame_layout"/>
+        android:layout_height="match_parent" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavBar"
@@ -18,5 +18,5 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="?android:attr/windowBackground"
-        app:menu="@menu/nav_bottom_menu"/>
+        app:menu="@menu/nav_bottom_menu" />
 </RelativeLayout>

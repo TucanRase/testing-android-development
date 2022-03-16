@@ -62,25 +62,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    void fetchSearch() {
-        Retrofit retrofit = new Retrofit.Builder().baseUrl("https://api.weatherapi.com/").addConverterFactory(GsonConverterFactory.create()).build();
-        WeatherApi weatherApi = retrofit.create(WeatherApi.class);
-        Call<List<Search>> call = weatherApi.getSearch("auto:ip");
-        call.enqueue(new Callback<List<Search>>() {
-            @Override
-            public void onResponse(Call<List<Search>> call, Response<List<Search>> response) {
-                if (response.isSuccessful()) {
-                    List<Search> searchData = response.body();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Search>> call, Throwable t) {
-                System.out.println("Error: " + t.getMessage());
-            }
-        });
-    }
-
     public void initializer() {
         tvLocation = findViewById(R.id.tvLocation);
         tvLastUpdate = findViewById(R.id.tvLastUpdate);
