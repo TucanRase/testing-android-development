@@ -50,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
                     tvLastUpdate.setText(weatherData.getCurrent().getLastUpdate());
                     tvTemp.setText(weatherData.getCurrent().getTempC() + "ºC");
                     forecastDays = weatherData.getForecast().getForecastDays();
-                    System.out.println(forecastDays.get(0).getDay().getMaxtemp_c() + "");
                     tvTemp.setText(forecastDays.get(0).getDay().getMaxtemp_c() + "");
                 }
             }

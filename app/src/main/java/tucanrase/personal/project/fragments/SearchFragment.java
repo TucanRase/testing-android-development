@@ -107,8 +107,8 @@ public class SearchFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                String location=tilSearch.getEditText().getText().toString().trim();
-                if (s.length() != 0)
+                String location = tilSearch.getEditText().getText().toString().trim();
+                if (s.length() != 0 && s.length() >= 3)
                     fetchSearch(location);
             }
         });
@@ -117,7 +117,7 @@ public class SearchFragment extends Fragment {
     }
 
     List<Search> fetchSearch(String location) {
-        pbSearch.setVisibility(View.VISIBLE);
+        // pbSearch.setVisibility(View.VISIBLE);
         Retrofit retrofit = new Retrofit.Builder().baseUrl("https://api.weatherapi.com/").addConverterFactory(GsonConverterFactory.create()).build();
         WeatherApi weatherApi = retrofit.create(WeatherApi.class);
         Call<List<Search>> call = weatherApi.getSearch("13084a48383d4912bce114058220303", location);
@@ -125,10 +125,9 @@ public class SearchFragment extends Fragment {
             @Override
             public void onResponse(Call<List<Search>> call, Response<List<Search>> response) {
                 if (response.isSuccessful()) {
-                    searches = response.body();
+                    searches.clear();
+                    searches.addAll(response.body());
                     adapter.notifyDataSetChanged();
-                    System.out.println(adapter.getItemCount());
-                    // TODO: 16/03/2022 Fix adapter refresh on call 
                 }
             }
 
@@ -137,7 +136,7 @@ public class SearchFragment extends Fragment {
                 System.out.println("Error: " + t.getMessage());
             }
         });
-        pbSearch.setVisibility(View.GONE);
+        //pbSearch.setVisibility(View.GONE);
         return searches;
     }
 }
