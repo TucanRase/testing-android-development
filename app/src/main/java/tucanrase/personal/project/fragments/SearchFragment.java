@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,22 +28,7 @@ import tucanrase.personal.project.SearchAdapter;
 import tucanrase.personal.project.WeatherApi;
 import tucanrase.personal.project.models.Search;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link SearchFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class SearchFragment extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
     RecyclerView searchRecycler;
     List<Search> searches = new ArrayList<>();
     SearchAdapter adapter;
@@ -52,34 +36,11 @@ public class SearchFragment extends Fragment {
     CardView pbSearch;
 
     public SearchFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment SearchFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static SearchFragment newInstance(String param1, String param2) {
-        SearchFragment fragment = new SearchFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -92,8 +53,20 @@ public class SearchFragment extends Fragment {
         searchRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new SearchAdapter(getContext(), searches);
         searchRecycler.setAdapter(adapter);
-
         tilSearch = view.findViewById(R.id.tilSearch);
+
+        adapter.setOnItemClickListener(new SearchAdapter.ClickListener() {
+            @Override
+            public void onItemClick(int position, View v) {
+//new HomeFragment(searches.get(position).getUrl());
+            }
+
+            @Override
+            public void onItemLongClick(int position, View v) {
+
+            }
+        });
+
         tilSearch.getEditText().addTextChangedListener(new TextWatcher() {
 
             @Override
@@ -116,8 +89,8 @@ public class SearchFragment extends Fragment {
         return view;
     }
 
-    List<Search> fetchSearch(String location) {
-        // pbSearch.setVisibility(View.VISIBLE);
+    void fetchSearch(String location) {
+        pbSearch.setVisibility(View.VISIBLE);
         Retrofit retrofit = new Retrofit.Builder().baseUrl("https://api.weatherapi.com/").addConverterFactory(GsonConverterFactory.create()).build();
         WeatherApi weatherApi = retrofit.create(WeatherApi.class);
         Call<List<Search>> call = weatherApi.getSearch("13084a48383d4912bce114058220303", location);
@@ -136,7 +109,6 @@ public class SearchFragment extends Fragment {
                 System.out.println("Error: " + t.getMessage());
             }
         });
-        //pbSearch.setVisibility(View.GONE);
-        return searches;
+        pbSearch.setVisibility(View.GONE);
     }
 }
