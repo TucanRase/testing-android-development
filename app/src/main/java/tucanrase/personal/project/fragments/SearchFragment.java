@@ -23,6 +23,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import tucanrase.personal.project.ActivityTest;
 import tucanrase.personal.project.R;
 import tucanrase.personal.project.SearchAdapter;
 import tucanrase.personal.project.WeatherApi;
@@ -48,7 +49,7 @@ public class SearchFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_search, container, false);
 
-        pbSearch = view.findViewById(R.id.loadingSearch);
+        pbSearch = view.findViewById(R.id.loadingHome);
         searchRecycler = view.findViewById(R.id.searchRecycler);
         searchRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new SearchAdapter(getContext(), searches);
@@ -58,7 +59,11 @@ public class SearchFragment extends Fragment {
         adapter.setOnItemClickListener(new SearchAdapter.ClickListener() {
             @Override
             public void onItemClick(int position, View v) {
-//new HomeFragment(searches.get(position).getUrl());
+                Bundle bundle = new Bundle();
+                bundle.putString("location", searches.get(position).getUrl());
+                HomeFragment home = new HomeFragment();
+                home.setArguments(bundle);
+                ((ActivityTest) getActivity()).replaceFragment(home);
             }
 
             @Override
