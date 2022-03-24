@@ -11,6 +11,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +29,7 @@ import tucanrase.personal.project.models.WeatherData;
 public class HomeFragment extends Fragment {
 
     private String location = "auto:ip";
-    TextView tvLocation, tvLastUpdate, tvTemp, tvMinMax, dateTomorrow, dateAfterT, date2Days, minMax1, minMax2, minMax3;
+    TextView tvLocation, tvLastUpdate, tvTemp, tvMinMax, dateAfterT, date2Days, minMax1, minMax2, minMax3;
     ImageView weatherIconNow, weatherIcon1, weatherIcon2, weatherIcon3;
     List<Forecastday> forecastDays = new ArrayList<>();
     CardView pbSearch;
@@ -56,13 +58,16 @@ public class HomeFragment extends Fragment {
         tvLastUpdate = view.findViewById(R.id.tvLastUpdate);
         tvTemp = view.findViewById(R.id.tvTemp);
         tvMinMax = view.findViewById(R.id.tvMinMax);
-
-        dateTomorrow = view.findViewById(R.id.dateTomorrow);
         dateAfterT = view.findViewById(R.id.dateAfterT);
         date2Days = view.findViewById(R.id.date2Days);
+        weatherIconNow = view.findViewById(R.id.weatherIconNow);
+        weatherIcon1 = view.findViewById(R.id.weatherIcon1);
+        weatherIcon2 = view.findViewById(R.id.weatherIcon2);
+        weatherIcon3 = view.findViewById(R.id.weatherIcon3);
         minMax1 = view.findViewById(R.id.minMax1);
         minMax2 = view.findViewById(R.id.minMax2);
         minMax3 = view.findViewById(R.id.minMax3);
+
         fetchWeather();
         return view;
     }
@@ -77,19 +82,32 @@ public class HomeFragment extends Fragment {
             public void onResponse(Call<WeatherData> call, Response<WeatherData> response) {
                 if (response.isSuccessful()) {
                     WeatherData weatherData = response.body();
+                    Picasso.get().load("https:"+weatherData.getCurrent().getCondition().getIcon()).fit().into(weatherIconNow);
                     tvLocation.setText(weatherData.getLocation().getName());
                     tvLastUpdate.setText(weatherData.getCurrent().getLastUpdate());
-                    tvTemp.setText(weatherData.getCurrent().getTempC() + "ºC");
+                    tvTemp.setText(weatherData.getCurrent().getTempC() + "º");
                     forecastDays = weatherData.getForecast().getForecastDays();
-                    tvTemp.setText(forecastDays.get(0).getDay().getMaxtemp_c() + "");
+                    tvMinMax.setText(forecastDays.get(0).getDay().getMintemp_c() + "º/"+forecastDays.get(0).getDay().getMaxtemp_c()+"º");
+                    Picasso.get().load("https:"+forecastDays.get(0).getDay().getCondition().getIcon()).fit().into(weatherIcon1);
+                    Picasso.get().load("https:"+forecastDays.get(1).getDay().getCondition().getIcon()).fit().into(weatherIcon2);
+                    Picasso.get().load("https:"+forecastDays.get(2).getDay().getCondition().getIcon()).fit().into(weatherIcon3);
+                    dateAfterT.setText(forecastDays.get(1).getDate());
+                    date2Days.setText(forecastDays.get(2).getDate());
+                    minMax1.setText(forecastDays.get(0).getDay().getMintemp_c()+"º/"+forecastDays.get(0).getDay().getMaxtemp_c()+"º");
+                    minMax2.setText(forecastDays.get(1).getDay().getMintemp_c()+"º/"+forecastDays.get(0).getDay().getMaxtemp_c()+"º");
+                    minMax3.setText(forecastDays.get(2).getDay().getMintemp_c()+"º/"+forecastDays.get(0).getDay().getMaxtemp_c()+"º");
+
+                    System.out.println(forecastDays.get(2).getDay().getCondition().getIcon());
+
+                    pbSearch.setVisibility(View.GONE);
                 }
             }
 
             @Override
             public void onFailure(Call<WeatherData> call, Throwable t) {
                 System.out.println("Error: " + t.getMessage());
+                pbSearch.setVisibility(View.GONE);
             }
         });
-        pbSearch.setVisibility(View.GONE);
     }
 }

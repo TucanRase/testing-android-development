@@ -106,14 +106,15 @@ public class SearchFragment extends Fragment {
                     searches.clear();
                     searches.addAll(response.body());
                     adapter.notifyDataSetChanged();
+                    pbSearch.setVisibility(View.GONE);
                 }
             }
 
             @Override
             public void onFailure(Call<List<Search>> call, Throwable t) {
                 System.out.println("Error: " + t.getMessage());
+                pbSearch.setVisibility(View.GONE);
             }
         });
-        pbSearch.setVisibility(View.GONE);
     }
 }
